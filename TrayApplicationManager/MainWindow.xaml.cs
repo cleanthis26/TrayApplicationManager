@@ -82,6 +82,7 @@ namespace TrayApplicationManager
             switch (ps)
             {
                 case ProcessStatus.ProgramPaused:
+                    //TODO fix icon
                     Tb.Icon = Properties.Resources.ProcessChecking;
                     break;
                 case ProcessStatus.Stopped:
