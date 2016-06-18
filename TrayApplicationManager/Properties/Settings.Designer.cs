@@ -70,5 +70,17 @@ namespace TrayApplicationManager.Properties {
                 this["UseProcessNameContains"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool ManualCheckOnly {
+            get {
+                return ((bool)(this["ManualCheckOnly"]));
+            }
+            set {
+                this["ManualCheckOnly"] = value;
+            }
+        }
     }
 }

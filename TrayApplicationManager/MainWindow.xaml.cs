@@ -26,6 +26,7 @@ namespace TrayApplicationManager
         private int CheckInterval;
         private string ProcessName;
         private bool UseProcessNameContains;
+        private bool ManualCheckOnly;
 
         // Variables
         private bool SettingsUpdated;
@@ -33,6 +34,7 @@ namespace TrayApplicationManager
         private TaskbarIcon Tb;
         private ProcessStatus CurrentStatus;
         private Process CurrentProcess;
+        private Timer CheckProcessStatusTimer;
         private Thread CheckProcessStatusThread;
 
         private delegate Process CheckProcessStatusDelegate();
@@ -50,6 +52,7 @@ namespace TrayApplicationManager
             CheckInterval = Properties.Settings.Default.CheckInterval;
             ProcessName = Properties.Settings.Default.ProcessName;
             UseProcessNameContains = Properties.Settings.Default.UseProcessNameContains;
+            ManualCheckOnly = Properties.Settings.Default.ManualCheckOnly;
         }
 
         private void CancelSettings()
@@ -239,6 +242,7 @@ namespace TrayApplicationManager
         protected override void OnClosing(CancelEventArgs e)
         {
             e.Cancel = true;
+            CancelSettings();
             SetWindowVisibility(false);
         }
 
