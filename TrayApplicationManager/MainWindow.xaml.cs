@@ -119,10 +119,18 @@ namespace TrayApplicationManager
             LoadSettings();
 
             // Start the checking thread
-            // TODO: Change this to timer for better easier management
             StartCheckWorkThread();
 
+            // TODO: Implemenation of the timer instead of thread 
+            // Start the checking timer
+            //StartCheckWorkTimer();
+
             Tb.ShowBalloonTip(Properties.Resources.ProgramName, "Started", BalloonIcon.Info);
+        }
+
+        private void StartCheckWorkTimer()
+        {
+
         }
 
         private void StartCheckWorkThread()
@@ -156,18 +164,21 @@ namespace TrayApplicationManager
 
             while (!(ProgramPaused || SettingsUpdated))
             {
-                CurrentProcess = CheckProcessStatus();
-
-                if (CurrentProcess == null)
-                {
-                    SetProcessStatus(ProcessStatus.Stopped);
-                }
-                else
-                {
-                    SetProcessStatus(ProcessStatus.Running);
-                }
-
+                CheckProcess();
                 Thread.Sleep(CheckInterval);
+            }
+        }
+
+        private void CheckProcess()
+        {
+            CurrentProcess = CheckProcessStatus();
+            if (CurrentProcess == null)
+            {
+                SetProcessStatus(ProcessStatus.Stopped);
+            }
+            else
+            {
+                SetProcessStatus(ProcessStatus.Running);
             }
         }
 
@@ -213,7 +224,12 @@ namespace TrayApplicationManager
         // Icon MouseOver
         private void ProcessNotifyIcon_TrayMouseMove(object sender, RoutedEventArgs e)
         {
-            // TODO Check for process
+            if (CurrentStatus.Equals(ProcessStatus.ProgramPaused))
+            {
+                // If paused do nothing
+                return;
+            }
+            CheckProcess();
         }
 
         // Context menu methods
