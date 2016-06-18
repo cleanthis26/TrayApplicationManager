@@ -171,6 +171,7 @@ namespace TrayApplicationManager
 
         private void CheckProcess()
         {
+            SetProcessStatus(ProcessStatus.Checking);
             CurrentProcess = CheckProcessStatus();
             if (CurrentProcess == null)
             {
@@ -182,9 +183,9 @@ namespace TrayApplicationManager
             }
         }
 
+        // Check process by exact name and get the first
         private Process CheckProcessStatusExact()
         {
-            SetProcessStatus(ProcessStatus.Checking);
             var processes = Process.GetProcessesByName(ProcessName);
             if (processes != null && processes.Any())
             {
@@ -193,9 +194,9 @@ namespace TrayApplicationManager
             return null;
         }
 
+        // Check process if it contains and get the first
         private Process CheckProcessStatusContains()
         {
-            SetProcessStatus(ProcessStatus.Checking);
             var ps = Process.GetProcesses();
 
             Process proc = null;
