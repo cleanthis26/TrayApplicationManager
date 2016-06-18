@@ -29,13 +29,10 @@ namespace TrayApplicationManager
         private bool ManualCheckOnly;
 
         // Variables
-        private bool SettingsUpdated;
-        private bool ProgramPaused;
         private TaskbarIcon Tb;
         private ProcessStatus CurrentStatus;
         private Process CurrentProcess;
         private Timer CheckProcessStatusTimer;
-        private Thread CheckProcessStatusThread;
 
         private delegate Process CheckProcessStatusDelegate();
         private CheckProcessStatusDelegate CheckProcessStatus;
@@ -53,6 +50,19 @@ namespace TrayApplicationManager
             ProcessName = Properties.Settings.Default.ProcessName;
             UseProcessNameContains = Properties.Settings.Default.UseProcessNameContains;
             ManualCheckOnly = Properties.Settings.Default.ManualCheckOnly;
+
+            // Set the checking process
+            if (UseProcessNameContains)
+            {
+                CheckProcessStatus = CheckProcessStatusContains;
+            }
+            else
+            {
+                CheckProcessStatus = CheckProcessStatusExact;
+            }
+
+            // If manual, it cannot be paused
+            PauseMenuItem.IsEnabled = !ManualCheckOnly;
         }
 
         private void CancelSettings()
@@ -65,8 +75,7 @@ namespace TrayApplicationManager
         {
             Properties.Settings.Default.Save();
             LoadSettings();
-            SettingsUpdated = true;
-            StartCheckWorkThread();
+            StartCheckProcess();
         }
 
         private void SetProcessStatus(ProcessStatus ps)
@@ -118,55 +127,49 @@ namespace TrayApplicationManager
 
             LoadSettings();
 
-            // Start the checking thread
-            StartCheckWorkThread();
-
-            // TODO: Implemenation of the timer instead of thread 
             // Start the checking timer
-            //StartCheckWorkTimer();
+            StartCheckProcess();
 
             Tb.ShowBalloonTip(Properties.Resources.ProgramName, "Started", BalloonIcon.Info);
         }
 
-        private void StartCheckWorkTimer()
+        private void StartCheckProcess()
         {
-
-        }
-
-        private void StartCheckWorkThread()
-        {
-            if (CheckProcessStatusThread != null)
+            if (ManualCheckOnly)
             {
-                while (CheckProcessStatusThread.IsAlive)
+                // If timer exists, dispose it
+                if (CheckProcessStatusTimer != null)
                 {
-                    // Wait for previous thread to exit
-                    Thread.Sleep(CheckInterval);
+                    CheckProcessStatusTimer.Dispose();
+                    CheckProcessStatusTimer = null;
                 }
-            }
-            CheckProcessStatusThread = new Thread(CheckProcessStatusThreadWork);
-            CheckProcessStatusThread.Start();
-        }
-
-        private void CheckProcessStatusThreadWork()
-        {
-            // Reset variables
-            ProgramPaused = false;
-            SettingsUpdated = false;
-
-            if (UseProcessNameContains)
-            {
-                CheckProcessStatus = CheckProcessStatusContains;
             }
             else
             {
-                CheckProcessStatus = CheckProcessStatusExact;
-            }
+                if (CheckProcessStatusTimer == null)
+                {
+                    CheckProcessStatusTimer = new Timer(CheckProcessStatusTimerCallback, new AutoResetEvent(false), 0, CheckInterval);
+                }
+                else
+                {
+                    CheckProcessStatusTimer.Change(0, CheckInterval);
+                }
 
-            while (!(ProgramPaused || SettingsUpdated))
-            {
-                CheckProcess();
-                Thread.Sleep(CheckInterval);
             }
+        }
+
+        private void StopCheckProcess()
+        {
+            if (CheckProcessStatusTimer != null)
+            {
+                CheckProcessStatusTimer.Change(Timeout.Infinite, Timeout.Infinite);
+            }
+        }
+
+        private void CheckProcessStatusTimerCallback(object state)
+        {
+            Debug.WriteLine(DateTime.Now.ToString("dd/MM/yy HH:mm:ss"));
+            CheckProcess();
         }
 
         private void CheckProcess()
@@ -230,7 +233,14 @@ namespace TrayApplicationManager
                 // If paused do nothing
                 return;
             }
+
             CheckProcess();
+
+            if (CheckProcessStatusTimer != null)
+            {
+                // Set the timer to check from after last check
+                CheckProcessStatusTimer.Change(CheckInterval, CheckInterval);
+            }
         }
 
         // Context menu methods
@@ -241,17 +251,17 @@ namespace TrayApplicationManager
 
         private void PauseMenuItem_Click(object sender, RoutedEventArgs e)
         {
-            ProgramPaused = !ProgramPaused;
-            if (ProgramPaused)
+            if (CurrentStatus.Equals(ProcessStatus.ProgramPaused))
             {
-                PauseMenuItem.Header = "Unpause";
-                SetProcessStatus(ProcessStatus.ProgramPaused);
+                // Start time again
+                PauseMenuItem.Header = "Pause";
+                StartCheckProcess();
             }
             else
             {
-                // Restart thread
-                PauseMenuItem.Header = "Pause";
-                StartCheckWorkThread();
+                PauseMenuItem.Header = "Unpause";
+                SetProcessStatus(ProcessStatus.ProgramPaused);
+                StopCheckProcess();
             }
         }
 
