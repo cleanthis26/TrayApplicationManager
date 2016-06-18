@@ -135,6 +135,7 @@ namespace TrayApplicationManager
 
         private void StartCheckProcess()
         {
+            PauseMenuItem.Header = "Pause";
             if (ManualCheckOnly)
             {
                 // If timer exists, dispose it
@@ -158,16 +159,18 @@ namespace TrayApplicationManager
             }
         }
 
-        private void StopCheckProcess()
+        private void PauseCheckProcess()
         {
             if (CheckProcessStatusTimer != null)
             {
+                PauseMenuItem.Header = "Unpause";
                 CheckProcessStatusTimer.Change(Timeout.Infinite, Timeout.Infinite);
             }
         }
 
         private void CheckProcessStatusTimerCallback(object state)
         {
+            // TODO: Remove this
             Debug.WriteLine(DateTime.Now.ToString("dd/MM/yy HH:mm:ss"));
             CheckProcess();
         }
@@ -254,14 +257,12 @@ namespace TrayApplicationManager
             if (CurrentStatus.Equals(ProcessStatus.ProgramPaused))
             {
                 // Start time again
-                PauseMenuItem.Header = "Pause";
                 StartCheckProcess();
             }
             else
             {
-                PauseMenuItem.Header = "Unpause";
+                PauseCheckProcess();
                 SetProcessStatus(ProcessStatus.ProgramPaused);
-                StopCheckProcess();
             }
         }
 
