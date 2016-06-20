@@ -121,6 +121,9 @@
   <data name="ProcessChecking" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ProcessChecking.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="ProcessPaused" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ProcessPaused.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="ProcessRunning" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\ProcessRunning.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -130,5 +133,8 @@
   <data name="ProgramName" xml:space="preserve">
     <value>Tray Application Manager</value>
     <comment>Program Name</comment>
+  </data>
+  <data name="TaskbarProgramIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\taskbarprogramicon.ico;System.Drawing.Icon, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

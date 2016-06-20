@@ -73,6 +73,16 @@ namespace TrayApplicationManager.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
+        internal static System.Drawing.Icon ProcessPaused {
+            get {
+                object obj = ResourceManager.GetObject("ProcessPaused", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
         internal static System.Drawing.Icon ProcessRunning {
             get {
                 object obj = ResourceManager.GetObject("ProcessRunning", resourceCulture);
@@ -96,6 +106,16 @@ namespace TrayApplicationManager.Properties {
         internal static string ProgramName {
             get {
                 return ResourceManager.GetString("ProgramName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
+        /// </summary>
+        internal static System.Drawing.Icon TaskbarProgramIcon {
+            get {
+                object obj = ResourceManager.GetObject("TaskbarProgramIcon", resourceCulture);
+                return ((System.Drawing.Icon)(obj));
             }
         }
     }

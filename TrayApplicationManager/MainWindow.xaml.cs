@@ -94,8 +94,7 @@ namespace TrayApplicationManager
             switch (ps)
             {
                 case ProcessStatus.ProgramPaused:
-                    //TODO fix icon
-                    Tb.Icon = Properties.Resources.ProcessChecking;
+                    Tb.Icon = Properties.Resources.ProcessPaused;
                     break;
                 case ProcessStatus.Stopped:
                     Tb.Icon = Properties.Resources.ProcessStopped;
@@ -127,9 +126,11 @@ namespace TrayApplicationManager
 
             LoadSettings();
 
-            // Start the checking timer
+            // Start the checking process
             StartCheckProcess();
 
+            // TODO: Process name to startup if checked
+            Debug.WriteLine(Process.GetCurrentProcess().ProcessName);
             Tb.ShowBalloonTip(Properties.Resources.ProgramName, "Started", BalloonIcon.Info);
         }
 
@@ -155,7 +156,6 @@ namespace TrayApplicationManager
                 {
                     CheckProcessStatusTimer.Change(0, CheckInterval);
                 }
-
             }
         }
 
