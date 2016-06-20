@@ -110,6 +110,15 @@ namespace TrayApplicationManager.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to TrayApplicationManager.
+        /// </summary>
+        internal static string RegistryKeyName {
+            get {
+                return ResourceManager.GetString("RegistryKeyName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
         internal static System.Drawing.Icon TaskbarProgramIcon {

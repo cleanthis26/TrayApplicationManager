@@ -1,4 +1,5 @@
 ﻿using Hardcodet.Wpf.TaskbarNotification;
+using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -111,6 +112,16 @@ namespace TrayApplicationManager
             }
         }
 
+        private void SetToStartup()
+        {
+            RegistryKey add = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+            add.SetValue(Properties.Resources.RegistryKeyName, "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
+            add.DeleteValue(Properties.Resources.RegistryKeyName);
+
+            // If null it does not exist
+            add.GetValue(Properties.Resources.RegistryKeyName);
+        }
+
         public MainWindow()
         {
             InitializeComponent();
@@ -129,9 +140,12 @@ namespace TrayApplicationManager
             // Start the checking process
             StartCheckProcess();
 
+            // TODO: Set startup value
+            SetToStartup();
+
             // TODO: Process name to startup if checked
             Debug.WriteLine(Process.GetCurrentProcess().ProcessName);
-            Tb.ShowBalloonTip(Properties.Resources.ProgramName, "Started", BalloonIcon.Info);
+            //Tb.ShowBalloonTip(Properties.Resources.ProgramName, "Started", BalloonIcon.Info);
         }
 
         private void StartCheckProcess()
