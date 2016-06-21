@@ -29,8 +29,12 @@
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
-                <TextBlock Name="ManualCheckOnlyTB"  Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
+                <TextBlock Name="IsStartupApplicationTB"  Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
+                    Startup Application
+                </TextBlock>
+                <TextBlock Name="ManualCheckOnlyTB"  Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
                     Manual Check Only
                 </TextBlock>
             </Grid>

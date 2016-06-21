@@ -320,7 +320,13 @@ namespace TrayApplicationManager
         private void Setting_MouseEnter(object sender, RoutedEventArgs e)
         {
             HoverTB.Inlines.Clear();
-            if (sender.Equals(this.ManualCheckOnlyTB))
+            if (sender.Equals(this.IsStartupApplicationTB))
+            {
+                HoverTB.Inlines.Add(new Bold(new Run("IS STARTUP")));
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add("TODO");
+            }
+            else if (sender.Equals(this.ManualCheckOnlyTB))
             {
                 HoverTB.Inlines.Add(new Bold(new Run("Checked")));
                 HoverTB.Inlines.Add(new LineBreak());
@@ -330,7 +336,7 @@ namespace TrayApplicationManager
             {
                 this.HoverTB.Text = "Hover over a setting to see their description.";
             }
-            
+
         }
     }
 }
