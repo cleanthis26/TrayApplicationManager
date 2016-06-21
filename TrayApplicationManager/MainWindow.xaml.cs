@@ -28,6 +28,7 @@ namespace TrayApplicationManager
         private string ProcessName;
         private bool UseProcessNameContains;
         private bool ManualCheckOnly;
+        private bool ShowBalloonMessageOnStart;
 
         // Variables
         private TaskbarIcon Tb;
@@ -51,6 +52,10 @@ namespace TrayApplicationManager
             ProcessName = Properties.Settings.Default.ProcessName;
             UseProcessNameContains = Properties.Settings.Default.UseProcessNameContains;
             ManualCheckOnly = Properties.Settings.Default.ManualCheckOnly;
+            ShowBalloonMessageOnStart = Properties.Settings.Default.ShowBalloonMessageOnStart;
+
+            // Set and check path if true, remove if false
+            ConfigureStartupApplicationSettings();
 
             // Set the checking process
             if (UseProcessNameContains)
@@ -112,14 +117,28 @@ namespace TrayApplicationManager
             }
         }
 
-        private void SetToStartup()
+        private void ConfigureStartupApplicationSettings()
         {
-            RegistryKey add = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-            add.SetValue(Properties.Resources.RegistryKeyName, "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
-            add.DeleteValue(Properties.Resources.RegistryKeyName);
+            try
+            {
+                // Get the registry subkey
+                RegistryKey add = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+                var currentVal = add.GetValue(Properties.Resources.RegistryKeyName);
 
-            // If null it does not exist
-            add.GetValue(Properties.Resources.RegistryKeyName);
+                if (IsStartupApplication)
+                {
+                    // Update value
+                    add.SetValue(Properties.Resources.RegistryKeyName, "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
+                }
+                else if (currentVal != null) // Not set and exists, delete it
+                {
+                    add.DeleteValue(Properties.Resources.RegistryKeyName);
+                }
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show($"Failed to configure startup settings. Exception:{Environment.NewLine}{e.Message}");
+            }
         }
 
         public MainWindow()
@@ -129,23 +148,23 @@ namespace TrayApplicationManager
             Tb = this.ProcessNotifyIcon;
             Tb.ToolTipText = Properties.Resources.ProgramName;
 
+            // Initial setting
             CurrentStatus = ProcessStatus.Stopped;
             UpdateIcon();
 
             // Don't show window
             SetWindowVisibility(false);
 
+            // Load the settings
             LoadSettings();
 
             // Start the checking process
             StartCheckProcess();
 
-            // TODO: Set startup value
-            SetToStartup();
-
-            // TODO: Process name to startup if checked
-            Debug.WriteLine(Process.GetCurrentProcess().ProcessName);
-            //Tb.ShowBalloonTip(Properties.Resources.ProgramName, "Started", BalloonIcon.Info);
+            if (ShowBalloonMessageOnStart)
+            {
+                Tb.ShowBalloonTip(Properties.Resources.ProgramName, "Started", BalloonIcon.Info);
+            }
         }
 
         private void StartCheckProcess()
