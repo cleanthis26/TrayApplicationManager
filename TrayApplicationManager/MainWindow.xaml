@@ -8,6 +8,38 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="350" Width="525">
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50px" MinHeight="50px" MaxHeight="50px"/>
+            <RowDefinition MinHeight="100px"/>
+        </Grid.RowDefinitions>
+        <TextBlock Grid.Row="0" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24">
+            Settings
+        </TextBlock>
+
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="1*"/>
+            </Grid.ColumnDefinitions>
+            
+            <Grid Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1*"/>
+                    <ColumnDefinition Width="1*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="1*"/>
+                </Grid.RowDefinitions>
+                <TextBlock Name="ManualCheckOnlyTB"  Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
+                    Manual Check Only
+                </TextBlock>
+            </Grid>
+            
+            <TextBlock Name="HoverTB"  Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15">
+                Hover over a setting to see their description.
+            </TextBlock>
+        </Grid>
+        
         <tb:TaskbarIcon
             Name="ProcessNotifyIcon"
             TrayMouseDoubleClick="ProcessNotifyIcon_TrayMouseDoubleClick"

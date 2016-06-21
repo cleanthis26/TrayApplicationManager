@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Windows;
+using System.Windows.Documents;
 
 namespace TrayApplicationManager
 {
@@ -314,6 +315,22 @@ namespace TrayApplicationManager
         private void SettingsMenuItem_Click(object sender, RoutedEventArgs e)
         {
             SetWindowVisibility(true);
+        }
+
+        private void Setting_MouseEnter(object sender, RoutedEventArgs e)
+        {
+            HoverTB.Inlines.Clear();
+            if (sender.Equals(this.ManualCheckOnlyTB))
+            {
+                HoverTB.Inlines.Add(new Bold(new Run("Checked")));
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add("TODO");
+            }
+            else
+            {
+                this.HoverTB.Text = "Hover over a setting to see their description.";
+            }
+            
         }
     }
 }
