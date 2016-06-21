@@ -122,17 +122,17 @@ namespace TrayApplicationManager
             try
             {
                 // Get the registry subkey
-                RegistryKey add = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                var currentVal = add.GetValue(Properties.Resources.RegistryKeyName);
+                RegistryKey startupRegistry = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+                var startupRegistryVal = startupRegistry.GetValue(Properties.Resources.RegistryKeyName);
 
                 if (IsStartupApplication)
                 {
                     // Update value
-                    add.SetValue(Properties.Resources.RegistryKeyName, "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
+                    startupRegistry.SetValue(Properties.Resources.RegistryKeyName, "\"" + System.Reflection.Assembly.GetExecutingAssembly().Location + "\"");
                 }
-                else if (currentVal != null) // Not set and exists, delete it
+                else if (startupRegistryVal != null) // Not set and exists, delete it
                 {
-                    add.DeleteValue(Properties.Resources.RegistryKeyName);
+                    startupRegistry.DeleteValue(Properties.Resources.RegistryKeyName);
                 }
             }
             catch (Exception e)
