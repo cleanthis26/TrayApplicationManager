@@ -145,8 +145,12 @@ namespace TrayApplicationManager
         {
             InitializeComponent();
 
+            // Get the taskbar icon object
             Tb = this.ProcessNotifyIcon;
             Tb.ToolTipText = Properties.Resources.ProgramName;
+
+            // Set window title
+            this.Title = Properties.Resources.ProgramName;
 
             // Initial setting
             CurrentStatus = ProcessStatus.Stopped;
