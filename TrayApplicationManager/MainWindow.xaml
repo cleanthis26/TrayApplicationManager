@@ -4,19 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TrayApplicationManager"
-        xmlns:tb="http://www.hardcodet.net/taskbar" 
+        xmlns:properties="clr-namespace:TrayApplicationManager.Properties"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Tray Application Manager" Height="350" Width="600" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50px" MinHeight="50px" MaxHeight="50px"/>
             <RowDefinition MinHeight="100px"/>
+            <RowDefinition Height="30px" MinHeight="30px" MaxHeight="30px"/>
+            <RowDefinition Height="10px" MinHeight="10px" MaxHeight="10px"/>
         </Grid.RowDefinitions>
-        <TextBlock Grid.Row="0" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="10" MaxWidth="10"/>
+            <ColumnDefinition />
+            <ColumnDefinition MinWidth="10" MaxWidth="10"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Row="0" Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="24">
             Settings
         </TextBlock>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="1" Grid.Column="1">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="1*"/>
@@ -30,18 +38,63 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="1*"/>
                     <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
+                    <RowDefinition Height="1*"/>
                 </Grid.RowDefinitions>
                 <TextBlock Name="IsStartupApplicationTB"  Grid.Row="0" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
                     Startup Application
                 </TextBlock>
-                <TextBlock Name="ManualCheckOnlyTB"  Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
+                <CheckBox Name="IsStartupApplicationCB" Grid.Row="0" Grid.Column="1" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=IsStartupApplication, Mode=TwoWay}" 
+                          HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="Setting_MouseEnter"/>
+
+                <TextBlock Name="CheckIntervalTextBlock"  Grid.Row="1" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
+                    Process Check Interval
+                </TextBlock>
+                <TextBox Name="CheckIntervalTextBox" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="Setting_MouseEnter" Width="150px"/>
+
+                <TextBlock Name="ProcessNameTextBlock"  Grid.Row="2" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
+                    Process Name
+                </TextBlock>
+                <TextBox Name="ProcessNameTextBox" Grid.Row="2" Grid.Column="1" Text="{Binding Source={x:Static properties:Settings.Default}, Path=ProcessName, Mode=TwoWay}" 
+                          HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="Setting_MouseEnter" Width="150px"/>
+
+                <TextBlock Name="UseProcessNameContainsTB"  Grid.Row="3" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
+                    Process name contains
+                </TextBlock>
+                <CheckBox Name="UseProcessNameContainsCB" Grid.Row="3" Grid.Column="1" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=UseProcessNameContains, Mode=TwoWay}" 
+                          HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="Setting_MouseEnter"/>
+
+                <TextBlock Name="ManualCheckOnlyTB"  Grid.Row="4" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
                     Manual Check Only
                 </TextBlock>
+                <CheckBox Name="ManualCheckOnlyCB" Grid.Row="4" Grid.Column="1" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=ManualCheckOnly, Mode=TwoWay}" 
+                          HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="Setting_MouseEnter"/>
+                
+                <TextBlock Name="ShowBalloonMessageOnStartTB"  Grid.Row="5" Grid.Column="0" TextWrapping="Wrap" HorizontalAlignment="Left" VerticalAlignment="Center" FontSize="15" MouseEnter="Setting_MouseEnter">
+                    Show message on start up
+                </TextBlock>
+                <CheckBox Name="ShowBalloonMessageOnStartCB" Grid.Row="5" Grid.Column="1" IsChecked="{Binding Source={x:Static properties:Settings.Default}, Path=ShowBalloonMessageOnStart, Mode=TwoWay}" 
+                          HorizontalAlignment="Left" VerticalAlignment="Center" MouseEnter="Setting_MouseEnter"/>
             </Grid>
             
             <TextBlock Name="HoverTB"  Grid.Column="1" TextWrapping="Wrap" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="15">
                 Hover over a setting to see their description.
             </TextBlock>
+        </Grid>
+
+        <Grid Grid.Row="2" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition Width="90"/>
+                <ColumnDefinition Width="90"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                View source on <Hyperlink Name="GithubSourceTB" RequestNavigate="GithubSourceTB_RequestNavigate" NavigateUri="https://github.com/cleanthis26/TrayApplicationManager">github</Hyperlink>
+            </TextBlock>
+            <Button Name="CancelButton" Grid.Column="1" Click="CancelButton_Click">Cancel</Button>
+            <Button Name="SaveButton" Grid.Column="2" Click="SaveButton_Click">Save</Button>
         </Grid>
         
         <tb:TaskbarIcon

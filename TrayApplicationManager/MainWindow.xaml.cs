@@ -3,7 +3,9 @@ using Microsoft.Win32;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows;
 using System.Windows.Documents;
@@ -23,6 +25,9 @@ namespace TrayApplicationManager
     /// </summary>
     public partial class MainWindow : Window
     {
+        // Constants
+        private readonly string DIGITS_ONLY = "^[0-9]+$";
+
         // Settings
         private bool IsStartupApplication;
         private int CheckInterval;
@@ -50,6 +55,7 @@ namespace TrayApplicationManager
         {
             IsStartupApplication = Properties.Settings.Default.IsStartupApplication;
             CheckInterval = Properties.Settings.Default.CheckInterval;
+            CheckIntervalTextBox.Text = CheckInterval + "";
             ProcessName = Properties.Settings.Default.ProcessName;
             UseProcessNameContains = Properties.Settings.Default.UseProcessNameContains;
             ManualCheckOnly = Properties.Settings.Default.ManualCheckOnly;
@@ -208,8 +214,6 @@ namespace TrayApplicationManager
 
         private void CheckProcessStatusTimerCallback(object state)
         {
-            // TODO: Remove this
-            Debug.WriteLine(DateTime.Now.ToString("dd/MM/yy HH:mm:ss"));
             CheckProcess();
         }
 
@@ -246,7 +250,7 @@ namespace TrayApplicationManager
             Process proc = null;
             foreach (var p in ps)
             {
-                if (p.ProcessName.Contains(ProcessName))
+                if (CultureInfo.InvariantCulture.CompareInfo.IndexOf(p.ProcessName, ProcessName, CompareOptions.IgnoreCase) >= 0)
                 {
                     proc = p;
                     break;
@@ -320,23 +324,97 @@ namespace TrayApplicationManager
         private void Setting_MouseEnter(object sender, RoutedEventArgs e)
         {
             HoverTB.Inlines.Clear();
-            if (sender.Equals(this.IsStartupApplicationTB))
-            {
-                HoverTB.Inlines.Add(new Bold(new Run("IS STARTUP")));
-                HoverTB.Inlines.Add(new LineBreak());
-                HoverTB.Inlines.Add("TODO");
-            }
-            else if (sender.Equals(this.ManualCheckOnlyTB))
+            if (sender.Equals(this.IsStartupApplicationTB) || sender.Equals(this.IsStartupApplicationCB))
             {
                 HoverTB.Inlines.Add(new Bold(new Run("Checked")));
                 HoverTB.Inlines.Add(new LineBreak());
-                HoverTB.Inlines.Add("TODO");
+                HoverTB.Inlines.Add("The program will automatically run when the computer starts.");
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add(new Bold(new Run("Unchecked")));
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add("The program will not run when the computer starts.");
+            }
+            else if (sender.Equals(this.CheckIntervalTextBlock) || sender.Equals(this.CheckIntervalTextBox))
+            {
+                HoverTB.Inlines.Add("Interval of the timer to check if the process is open in milliseconds. Ignored if manual check is enabled.");
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add("Minimum value: 100.");
+            }
+            else if (sender.Equals(this.ProcessNameTextBlock) || sender.Equals(this.ProcessNameTextBox))
+            {
+                HoverTB.Inlines.Add("The name of the process to check.");
+            }
+            else if (sender.Equals(this.UseProcessNameContainsTB) || sender.Equals(this.UseProcessNameContainsCB))
+            {
+                HoverTB.Inlines.Add(new Bold(new Run("Checked")));
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add("Check process will check if the process contains the process name.");
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add(new Bold(new Run("Unchecked")));
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add("Check process will check for exact process name.");
+            }
+            else if (sender.Equals(this.ManualCheckOnlyTB) || sender.Equals(this.ManualCheckOnlyCB))
+            {
+                HoverTB.Inlines.Add(new Bold(new Run("Checked")));
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add("Mouse over the tray icon to check the process status.");
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add(new Bold(new Run("Unchecked")));
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add("Timer will automatically check for the process status. (Mouse over also checks)");
+            }
+            else if (sender.Equals(this.ShowBalloonMessageOnStartTB) || sender.Equals(this.ShowBalloonMessageOnStartCB))
+            {
+                HoverTB.Inlines.Add(new Bold(new Run("Checked")));
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add("Balloon message will appear when the program starts.");
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add(new Bold(new Run("Unchecked")));
+                HoverTB.Inlines.Add(new LineBreak());
+                HoverTB.Inlines.Add("Balloon message will not be shown when the program starts.");
             }
             else
             {
                 this.HoverTB.Text = "Hover over a setting to see their description.";
             }
+        }
 
+        private void SaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Verify settings first
+            if (Regex.IsMatch(CheckIntervalTextBox.Text, DIGITS_ONLY))
+            {
+                Properties.Settings.Default.CheckInterval = int.Parse(CheckIntervalTextBox.Text);
+                if (Properties.Settings.Default.CheckInterval < 100)
+                {
+                    MessageBox.Show("Process Check Interval minimum value is 100.");
+                    return;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Process Check Interval must be positive digits only.");
+                return;
+            }
+            SaveSettings();
+            SetWindowVisibility(false);
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            CancelSettings();
+            SetWindowVisibility(false);
+        }
+
+        private void GithubSourceTB_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+        {
+            Process.Start(e.Uri.AbsoluteUri);
         }
     }
 }
